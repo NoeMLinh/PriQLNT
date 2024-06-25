@@ -18,6 +18,8 @@ int main() {
 		case 1:
 			menuThemThuoc();
 			char banChoice;
+			cout << "Nhap lua chon cua ban: ";
+			cin >> banChoice;
 			switch (banChoice) {
 			case 1: {
 				char c;
