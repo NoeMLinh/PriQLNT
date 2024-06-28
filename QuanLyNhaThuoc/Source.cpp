@@ -44,6 +44,7 @@ int main() {
 				cout << "Lua chon khong hop le. Vui long chon lai!" << endl;
 				break;
 			}
+			system("pause");
 			break;
 		case 2:
 			xemThuoc(thuoc, n);
