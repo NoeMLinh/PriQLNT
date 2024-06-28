@@ -18,7 +18,7 @@ void inDanhSachThuoc(Thuoc thuoc[], int n);
 void timThuoc(Thuoc thuoc[], int n);
 void printMenu();
 void SetWindowSize(SHORT width,SHORT height);
-void xoaThuoc(Thuoc thuoc[], int n);
+void xoaThuoc(Thuoc thuoc[], int &n);
 void printMenuBanThuoc();
 void xuatFileDS(Thuoc thuoc[], int n);
 void themThuoc(Thuoc &thuoc);
