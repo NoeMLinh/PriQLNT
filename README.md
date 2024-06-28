@@ -9,3 +9,5 @@ Các tính năng còn lại chạy tương đối ổn(xuất file danh sách th
 File .exe chạy demo chương trình nằm ở x64/Debug
 - v1.0.1
 Fix lỗi không xóa hoàn toàn được dữ liệu.
+- v1.0.2
+Fix lỗi UI thêm thuốc.
