@@ -125,7 +125,7 @@ void timThuoc(Thuoc thuoc[], int n) {
 	}
 	system("pause");
 }
-void xoaThuoc(Thuoc thuoc[], int soLuongThuoc) {
+void xoaThuoc(Thuoc thuoc[], int &soLuongThuoc) {
 	system("cls");
 	cout << "--------------------------------------------------" << endl;
 	cout << "Nhap ma so thuoc can xoa: ";
