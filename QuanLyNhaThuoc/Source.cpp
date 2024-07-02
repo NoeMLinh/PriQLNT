@@ -1,5 +1,4 @@
 #include <iostream>
-#include <Windows.h>
 #include <conio.h>
 #include <string>
 #include <math.h>
@@ -9,19 +8,21 @@ using namespace std;
 int main() {
 	Thuoc thuoc[100];
 	int n = 0;
+	string path = "C:\\Users\\admin\\Documents\\database.txt";
 	int choice;
 	do {
-		printMenu();;
+		printMenu(path);
 		cout << "Nhap lua chon cua ban: ";
 		cin >> choice;
 		switch (choice) {
 		case 1:
 			menuThemThuoc();
-			char banChoice;
+			int choice1;
 			cout << "Nhap lua chon cua ban: ";
-			cin >> banChoice;
-			switch (banChoice) {
-			case 1: {
+			cin >> choice1;
+			switch (choice1) {
+			case 1:
+			{
 				char c;
 				do {
 					themThuoc(thuoc[n]);
@@ -33,15 +34,33 @@ int main() {
 			}
 			case 2:
 			{
-				string path;
-				cout << "Nhap duong dan file: ";
-				cin.ignore();
-				getline(cin, path);
-				tachPhanTuTuFile(path);
-				break;
+				system("cls");
+				string path1;
+				cout << "File don thuoc co dinh dang nhu sau: " << endl;
+				cout << "(So loai thuoc can nhap kho)" << endl << "(Ten thuoc),(Ma so),(Gia ban),(So luong)" << endl;
+				cout << "Vi du: " << endl;
+				cout << "3" << endl;
+				cout << "Thuoc1,MS1,10000,10" << endl;
+				cout << "Thuoc2,MS2,20000,20" << endl;
+				cout << "Thuoc3,MS3,30000,30" << endl;
+				cout << "Nhap duong dan file(bo dau ngoac kep hai dau duong dan): ";
+				cin >> path1;
+				ifstream file;
+				file.open(path1);
+				int x;
+				file >> x;
+				string lineThuoc;
+				for (int i = 0; i < x; i++) {
+					file >> lineThuoc;
+					tachDauPhay(lineThuoc, thuoc[n+i]);
 				}
+				n += x;
+				file.close();
+				cout << "Nhap thanh cong!" << endl;
+				break;
+			}
 			default:
-				cout << "Lua chon khong hop le. Vui long chon lai!" << endl;
+				cout << "Lua chon khong hop le." << endl;
 				break;
 			}
 			system("pause");
@@ -63,6 +82,7 @@ int main() {
 			cin >> choiceBanThuoc;
 			switch (choiceBanThuoc) {
 			case 1:
+				xemThuoc(thuoc, n);
 				banThuocNgoai(thuoc, n);
 				break;
 			case 2:
@@ -91,12 +111,28 @@ int main() {
 				cout << "\nLua chon khong hop le." << endl;
 			}
 			break;
-		case 8: 
-			break;
-		default:
-			cout << "Lua chon khong hop le. Vui long chon lai!" << endl;
+		case 8:
+		{
+			system("cls");
+			cout << "--------------------------------------------------" << endl;
+			ofstream file;
+			file.open("C:\\Users\\admin\\Documents\\DanhSachThuoc.txt");
+			file << n << endl;
+			for (int i = 0; i < n; i++) {
+				file << thuoc[i].TenThuoc << "," << thuoc[i].MaSo << "," << thuoc[i].GiaBan << "," << thuoc[i].soLuongThuoc << endl;
+			}
+			file.close();
+			exit(0);
 			break;
 		}
-	} while (choice != 8);
+		default:
+			cout << "Lua chon khong hop le. Vui long chon lai!" << endl;
+			system("pause");
+			printMenu(path);
+			cout << "Nhap lua chon cua ban: ";
+			cin >> choice;
+			break;
+		}
+	} while (choice != 9);
 	return 0;
 }
