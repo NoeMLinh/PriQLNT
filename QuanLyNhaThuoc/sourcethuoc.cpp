@@ -1,18 +1,5 @@
-﻿#include "thuoc.h"
-#define SPT(x) (sizeof(x) / sizeof(x[0]))
-void SetWindowSize(SHORT width, SHORT height)
-{
-	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	SMALL_RECT WindowSize;
-	WindowSize.Top = 0;
-	WindowSize.Left = 0;
-	WindowSize.Right = width;
-	WindowSize.Bottom = height;
-
-	SetConsoleWindowInfo(hStdout, 1, &WindowSize);
-}
-void printMenu() {
+#include "thuoc.h"
+void printMenu(string path) {
 	system("cls");
 	cout << "--------------------------------------------------" << endl;
 	cout << "            He thong quan ly nha thuoc            " << endl;
@@ -24,7 +11,7 @@ void printMenu() {
 	cout << "5. Ban thuoc" << endl;
 	cout << "6. Xuat file danh sach thuoc" << endl;
 	cout << "7. Tim thuoc" << endl;
-	cout << "8. Thoat" << endl;
+	cout << "8. Thoat(thong tin da nhap se duoc luu o " << path << ")" << endl;
 	cout << "--------------------------------------------------" << endl;
 }
 void printMenuBanThuoc() {
@@ -98,6 +85,12 @@ void xemThuoc(Thuoc thuoc) {
 void inDanhSachThuoc(Thuoc thuoc[], int n) {
 	system("cls");
 	cout << "--------------------------------------------------" << endl;
+	if (n == 0) {
+		cout << "Khong co thuoc nao trong kho!" << endl;
+		cout << "--------------------------------------------------";
+		system("pause");
+		return;
+	}
 	for (int i = 0; i < n; i++) {
 		cout << "Thuoc thu " << i + 1 << endl;
 		xemThuoc(thuoc[i]);
@@ -137,8 +130,9 @@ void xoaThuoc(Thuoc thuoc[], int &soLuongThuoc) {
 			for (int j = i; j < soLuongThuoc - 1; j++) {
 				thuoc[j] = thuoc[j + 1];
 			}
-			soLuongThuoc--;
+			--soLuongThuoc;
 			cout << "Xoa thanh cong!" << endl;
+			system("pause");
 			return;
 		}
 	}
@@ -147,76 +141,134 @@ void xoaThuoc(Thuoc thuoc[], int &soLuongThuoc) {
 	system("pause");
 }
 void banThuocNgoai(Thuoc thuoc[], int n) {
-	system("cls");
 	cout << "--------------------------------------------------" << endl;
-	cout << "Nhap ten thuoc can ban: ";
-	string tenThuocCanBan;
-	cin.ignore();
-	getline(cin, tenThuocCanBan);
-	for (int i =  0; i < n; i++) {
-		if (thuoc[i].TenThuoc == tenThuocCanBan) {
-			cout << "Nhap so luong thuoc can ban: ";
-			int soLuongCanBan;
-			cin >> soLuongCanBan;
-			if (soLuongCanBan > thuoc[i].soLuongThuoc) {
-				cout << "So luong thuoc trong kho khong du de ban!" << endl;
-			}
-			else {
-				thuoc[i].soLuongThuoc -= soLuongCanBan;
-				int giaBan = thuoc[i].GiaBan * soLuongCanBan;
-				cout << "Tong tien: " << giaBan << endl;
+	int x = 0;
+	char a = 'y';
+	Thuoc banThanhCong[100];
+	do {
+		cout << "Nhap ten thuoc can ban: ";
+		string tenThuocCanBan;
+		cin.ignore();
+		getline(cin, tenThuocCanBan);
+		for (int i = 0; i < n; i++) {
+			if (thuoc[i].TenThuoc == tenThuocCanBan) {
+				cout << "Nhap so luong thuoc can ban: ";
+				int soLuongCanBan;
+				cin >> soLuongCanBan;
+				if (soLuongCanBan > thuoc[i].soLuongThuoc) {
+					cout << "So luong thuoc trong kho khong du de ban!" << endl;
+				}
+				else {
+					thuoc[i].soLuongThuoc -= soLuongCanBan;
+					int giaBan = thuoc[i].GiaBan * soLuongCanBan;
+					cout << "Tong tien: " << giaBan << endl;
+					banThanhCong[x].TenThuoc = thuoc[i].TenThuoc;
+					banThanhCong[x].GiaBan = giaBan;
+					x++;
+				}
 			}
 		}
+		cout << "Ban co muon mua them thuoc khong? (y/n): ";
+		cin >> a;
+	} while (a == 'y');
+	cout << "Ban co muon xuat file hoa don khong? (y/n): ";
+	char c;
+	cin >> c;
+	if (c == 'y') {
+		ofstream file;
+		string path = "C:\\Users\\admin\\Documents\\HoaDonBanThuoc.xls";
+		file.open("C:\\Users\\admin\\Documents\\HoaDonBanThuoc.xls");
+		file << "Hoa don ban thuoc" << endl;
+		file << "Ten thuoc\tGia ban" << endl;
+		for (int i = 0; i < x; i++) {
+			file << banThanhCong[i].TenThuoc << "\t" << banThanhCong[i].GiaBan << endl;
+		}
+		cout << "Xuat file thanh cong!" << endl;
+		cout << "File duoc luu tai: " << path << endl;
+		file.close();
 	}
-	cout << "--------------------------------------------------";
+	cout << "--------------------------------------------------\n";
 	system("pause");
 }
 void banThuocTheoDon(Thuoc thuoc[], int n) {
 	system("cls");
 	string path;
 	cout << "--------------------------------------------------" << endl;
-	cout << "Nhap duong dan den file don thuoc: ";
-	cin.ignore();
-	getline(cin, path);
+	cout << "Nhap duong dan den file don thuoc(bo dau ngoac kep hai dau duong dan): ";
+	cin >> path;
 	ifstream file;
 	file.open(path);
 	int soThuocCanMua;
 	file >> soThuocCanMua;
-	cout << soThuocCanMua;
+	Thuoc *muaThuoc = new Thuoc[soThuocCanMua];
+	string *line = new string[soThuocCanMua];
+	int x = 0;
+	Thuoc banThanhCong[100];
 	for (int i = 0; i < soThuocCanMua; i++) {
-		file >> thuoc[i].TenThuoc;
-		for (int j = 0; j < n; j++) {
-			if (thuoc[j].TenThuoc == thuoc[i].TenThuoc) {
-				file >> thuoc[i].soLuongThuoc;
-				if (thuoc[j].soLuongThuoc < thuoc[i].soLuongThuoc) {
-					cout << "So luong thuoc " << thuoc[j].TenThuoc << " khong du de ban!" << endl;
+		file >> line[i];
+		tachDauPhayBanThuoc(line[i], muaThuoc[i]);
+	}
+	for (int a = 0; a < soThuocCanMua; a++) {
+		bool timThay = false;
+		for (int b = 0; b < n; b++) {
+			if (muaThuoc[a].TenThuoc == thuoc[b].TenThuoc) {
+				timThay = true;
+				if (muaThuoc[a].soLuongThuoc > thuoc[b].soLuongThuoc) {
+					cout << "So luong thuoc " << muaThuoc[a].TenThuoc << " trong kho khong du de ban!" << endl;
 				}
 				else {
-					thuoc[j].soLuongThuoc -= thuoc[i].soLuongThuoc;
-					cout << "Ban thuoc " << thuoc[j].TenThuoc << " thanh cong!" << endl;
-					int giaBan = thuoc[j].GiaBan * thuoc[i].soLuongThuoc;
+					thuoc[b].soLuongThuoc -= muaThuoc[a].soLuongThuoc;
+					int giaBan = muaThuoc[a].soLuongThuoc * thuoc[b].GiaBan;
+					cout << "Ten thuoc: " << muaThuoc[a].TenThuoc << endl;
 					cout << "Tong tien: " << giaBan << endl;
+					banThanhCong[x] = muaThuoc[a];
+					x++;
+					continue;
 				}
+			} else {
+				timThay = false;
 			}
 		}
+		if (!timThay) {
+			cout << "Khong tim thay thuoc " << muaThuoc[a].TenThuoc << " trong kho!" << endl;
+		}
+	}
+	cout << "--------------------------------------------------" << endl;
+	cout << "Ban co muon xuat file hoa don khong? (y/n): ";
+	char c;
+	cin >> c;
+	if (c == 'y') {
+		ofstream file;
+		string path = "C:\\Users\\admin\\Documents\\HoaDonBanThuoc.xls";
+		file.open("C:\\Users\\admin\\Documents\\HoaDonBanThuoc.xls");
+		file << "Hoa don ban thuoc" << endl;
+		file << "Ten thuoc\tSo luong\tGia ban" << endl;
+		for (int i = 0; i < x; i++) {
+			file << muaThuoc[i].TenThuoc << "\t" << muaThuoc[i].soLuongThuoc << "\t" << muaThuoc[i].soLuongThuoc * thuoc[i].GiaBan << endl;
+		}
+		cout << "Xuat file thanh cong!" << endl;
+		cout << "File duoc luu tai: " << path << endl;
+		cout << "--------------------------------------------------\n" << endl;
+		file.close();
 	}
 	file.close();
+	delete [] muaThuoc;
+	delete [] line;
 	system("pause");
 }
 void xuatFileDS(Thuoc thuoc[], int n) {
 	system("cls");
 	cout << "--------------------------------------------------" << endl;
 	ofstream file;
-	file.open("DanhSachThuoc.txt");
+	string path = "C:\\Users\\admin\\Documents\\DanhSachThuoc.xls";
+	file.open("C:\\Users\\admin\\Documents\\DanhSachThuoc.xls");
 	file << "Danh sach thuoc trong kho" << endl;
-	file << "--------------------------------------------------" << endl;
-	file << "Ten thuoc\t\tMa so\t\tGia ban\t\tSo luong" << endl;
-	file << "--------------------------------------------------" << endl;
+	file << "Ten thuoc\tMa so\tGia ban\tSo luong" << endl;
 	for (int i = 0; i < n; i++) {
-		file << thuoc[i].TenThuoc << "\t\t" << thuoc[i].MaSo << "\t\t" << thuoc[i].GiaBan << "\t\t" << thuoc[i].soLuongThuoc << endl;
+		file << thuoc[i].TenThuoc << "\t*" << thuoc[i].MaSo << "\t" << thuoc[i].GiaBan << "\t" << thuoc[i].soLuongThuoc << endl;
 	}
-	file << "--------------------------------------------------" << endl;
 	cout << "Xuat file thanh cong!" << endl;
+	cout << "File duoc luu tai: " << path << endl;
 	cout << "--------------------------------------------------" << endl;
 	file.close();
 	system("pause");
@@ -243,60 +295,55 @@ void timThuocTheoTen(Thuoc thuoc[], int n) {
     cout << "--------------------------------------------------";
 	system("pause");
 }
-Thuoc tachPhanTuTuFile(string path) {
-	string s;
-	ifstream file;
-	file.open(path);
-	int soThuocCanMua;
-	file >> soThuocCanMua;
-	Thuoc result; 
-	vector<string> tokens; 
-	tokens = tachChuoiBangDauPhay(s);
-	if (tokens.size() > 5 || tokens.size() < 2) {
-		cout << "Loi: So luong phan tu sai!" << endl;
-		return result; 
-	}
-	result.TenThuoc = tokens[0];
-	result.MaSo = tokens[1];
-	stringstream ss1(tokens[2]);
-	ss1 >> result.GiaBan;
-
-	stringstream ss2(tokens[3]);
-	ss2 >> result.soLuongThuoc;
-
-	// Kiểm tra lỗi chuyển đổi
-	if (ss1.fail() || ss2.fail()) {
-		cout << "Lỗi: Dữ liệu không hợp lệ!" << endl;
-		return result;
-	}
-
-	return result;
-}
-vector<string> tachChuoiBangDauPhay(string s) {
-	vector<string> tokens; 
-	string token;
-	for (int i = 0; i < s.length(); i++) {
-		if (s[i] == ',') { 
-			if (!token.empty()) { 
-				tokens.push_back(token);
-				token.clear(); 
-			}
-		}
-		else {
-			token += s[i];
-		}
-	}
-
-	if (!token.empty()) { 
-		tokens.push_back(token);
-	}
-
-	return tokens;
-}
 void menuThemThuoc() {
 	system("cls");
 	cout << "--------------------------------------------------" << endl;
 	cout << "1. Them thuoc tu ban phim" << endl;
 	cout << "2. Them thuoc tu file" << endl;
 	cout << "--------------------------------------------------" << endl;
+}
+void menuThoat() {
+	system("cls");
+	cout << "--------------------------------------------------" << endl;
+	cout << "1. Luu va thoat" << endl;
+	cout << "2. Thoat" << endl;
+	cout << "--------------------------------------------------" << endl;
+}
+void tachDauPhay(string s, Thuoc &thuoc) {
+	char arr[100];
+	string arr2[4];
+	int x = s.length();
+	for (int i = 0; i < x; i++) {
+		arr[i] = s[i];
+	}
+	int a = 0;
+	for (int i = 0; i < x; i++) {
+		if (arr[i] == ',') {
+			a++;
+			continue;
+		}
+		arr2[a] += arr[i];
+	}
+	thuoc.TenThuoc = arr2[0];
+	thuoc.MaSo = arr2[1];
+	thuoc.GiaBan = stoi(arr2[2]);
+	thuoc.soLuongThuoc = stoi(arr2[3]);
+}
+void tachDauPhayBanThuoc(string s, Thuoc &thuoc) {
+	char arr[100];
+	string arr2[2];
+	int x = s.length();
+	for (int i = 0; i < x; i++) {
+		arr[i] = s[i];
+	}
+	int a = 0;
+	for (int i = 0; i < x; i++) {
+		if (arr[i] == ',') {
+			a++;
+			continue;
+		}
+		arr2[a] += arr[i];
+	}
+	thuoc.TenThuoc = arr2[0];
+	thuoc.soLuongThuoc = stoi(arr2[1]);
 }
