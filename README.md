@@ -11,3 +11,7 @@ File .exe chạy demo chương trình nằm ở x64/Debug
 Fix lỗi không xóa hoàn toàn được dữ liệu.
 - v1.0.2
 Fix lỗi UI thêm thuốc.
+- v1.1.0
+Hoàn thiên tính năng nhập file data, nhập file đơn thuốc, xuất file đơn thuốc.
+Sẵn sàng sử dụng để bảo vệ những tính năng cơ bản nhất và một số tính năng nâng cao.
+(chưa chú thích code)
