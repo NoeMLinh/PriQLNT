@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <Windows.h>
 #include <conio.h>
 #include <string>
 #include <math.h>
@@ -16,8 +15,7 @@ struct Thuoc {
 };
 void inDanhSachThuoc(Thuoc thuoc[], int n);
 void timThuoc(Thuoc thuoc[], int n);
-void printMenu();
-void SetWindowSize(SHORT width,SHORT height);
+void printMenu(string path);
 void xoaThuoc(Thuoc thuoc[], int &n);
 void printMenuBanThuoc();
 void xuatFileDS(Thuoc thuoc[], int n);
@@ -29,6 +27,7 @@ void banThuocNgoai(Thuoc thuoc[], int n);
 void banThuocTheoDon(Thuoc thuoc[], int n);
 void printMenuTimThuoc();
 void timThuocTheoTen(Thuoc thuoc[], int n);
-Thuoc tachPhanTuTuFile(string path);
-vector<string> tachChuoiBangDauPhay(string s);
 void menuThemThuoc();
+void menuThoat();
+void tachDauPhay(string s, Thuoc &thuoc);
+void tachDauPhayBanThuoc(string s, Thuoc &thuoc);
